@@ -3,7 +3,6 @@ import axios from "axios";
 import dotenv from "dotenv";
 import cors from "cors";
 import moment from "moment";
-import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -12,7 +11,6 @@ const weather_URL = "https://api.openweathermap.org/data/2.5/";
 const API_KEY = process.env.API_KEY;
 
 app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -64,29 +62,9 @@ async function fetchWeatherData(latitude, longitude) {
   }
 }
 
-app.get("/toxicapi/staticweather", async (req, res) => {
-  try {
-    const weatherData = await fetchWeatherData(44.34, 10.99);
-
-    res.json(weatherData);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch weather data" });
-  }
-});
-
 app.post("/toxicapi/weather", async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
-
-    const location = {
-      lat: latitude,
-      lon: longitude,
-    };
-
-    res.cookie("weather-location", JSON.stringify(location), {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: false,
-    });
 
     const weatherData = await fetchWeatherData(latitude, longitude);
 
